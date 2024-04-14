@@ -16,7 +16,16 @@ public:
 		for (int i = 0; i < _data.size(); i++)
 			_data[i].resize(_cols); // увеличиваем до размера количество столбцов
 	};
+	//конструктор для удобного занесения элементов в матрицу
+	matrix(int rows, int cols, vector<vector<double>> data) :
+		_cols(cols),
+		_rows(rows),
+		_data(data)
+	{};
+
 	double& at(int row, int col) {
+		if(row >= _rows || col >= _cols)
+			throw logic_error("Out of range at ()");
 		return _data[row][col];        //чтобы могли в матрицу вводить значения
 	}
 	//перегрузка оператора вывода
@@ -129,7 +138,7 @@ public:
 				res._data[i][j] = _data[i][j] / right._data[i][j];
 		return res;
 	}
-	// завтра обратную матрицу и деление уже матрицу на матрицу.
+	
 	//оператор сравнения матриц
 	friend bool operator==(const matrix& left, const matrix& right) {
 		if (left._rows != right._rows || left._cols != right._cols)
@@ -145,9 +154,7 @@ public:
 	friend bool operator!=(const matrix& left, const matrix& right) {
 		return !(left == right);
 	}
-	//проверка на тип матриц(квадратная,единичная, нулевая,...)
 	// в степень можно возводить только квадратные матрицы. Оператор возведения в степень.
-	//---------------------------//-----------------------------------------------------------------------------------------
 	//оператор возведения в степень матрицы
 	friend matrix operator^(const matrix& mtx, int s) {
 		if (!mtx.isSquare())
@@ -286,14 +293,164 @@ public:
 	{
 		return left * right.inv();
 	}
+	//норма матрицы 
+	//i -номер нормы 
+	//1-столбцовая норма 
+	//2- бесконечная норма 
+	//3- сферическая норма 
+	double norm(int i) const {
+		if (i == 1)
+		{
+			double max = -1;
+			for (int j = 0; j < _cols; j++)// складываем столбцы и выводим наибольшую сумму
+			{
+				double sum = 0;
+				for (int i = 0; i < _rows; i++)
+				{
+					sum += abs(_data[i][j]);
+				}
+				if (sum > max)
+					max = sum;
+			}
+			return max;
+		}
+		if (i == 2)
+		{
+			double max = -1;
+			for (int i = 0; i < _rows; i++)    //складываем стоку и выводим с макс числом 
+			{
+				double sum = 0;
+				for (int j = 0; j < _cols; j++)
+				{
+					sum += abs(_data[i][j]);
+				}
+				if (sum > max)
+					max = sum;
+			}
+			return max;
+		}
 
+		if (i == 3)
+		{
+			double sum = 0;                          
+			for (int i = 0; i < _rows; i++)                       //возводит в степень каждый элемент матрицы и потом извлекает корень из суммы
+				for (int j = 0; j < _cols; j++)
+					sum += _data[i][j] * _data[i][j];
+			return sqrt(sum);
+		}
+	}
+	double& operator ()(int i, int j) //работает с неконстантными объектами 
+	{
+		if (i >= _rows || j >= _cols)
+			throw logic_error("Out of range index operator()");
+		return _data[i][j];
+	}
+	double operator ()(int i, int j) const     //работает с константными объектами 
+	{
+		if(i >= _rows || j >= _cols)
+			throw logic_error("Out of range index operator()");
+		return _data[i][j];
+	}
+	int rows()const { //возращает размер сколько строк 
+		return _rows;
+	}
+	int cols()const { //возвращает сколько столбцов
+		return _cols;
+	}
+	vector<double>get_row(int i) const {                      //возвращает i строку 
+		if(i>=_rows)
+			throw logic_error("Out of range index get_row");
+		return _data[i];
+	}
+
+	vector<double>get_col(int j) const {                       //возвращает j столбец
+		if (j >= _cols)
+			throw logic_error("Out of range index get_col()");
+
+		vector<double> column;                       //массив, который хранит столбец
+		for (int i = 0; i < _rows; i++)
+			column.push_back(_data[i][j]);
+		return column;
+	} 
+	//проверка является  матрица диагональной или нет 
+	bool isDiagonal() const {
+		if (!isSquare())
+			return false;
+		for (int i = 0; i < _rows; i++)
+			for (int j = 0; j < _cols; j++)
+				if (i != j && _data[i][j] != 0)
+
+					return false;
+		return true;
+	}
+	//проверка является матрица единичной или нет
+	bool isIdentity()const {
+		if (!isDiagonal())
+			return false;
+		for (int i = 0; i < _rows; i++)
+			if (_data[i][i] != 1)
+				return false;
+		return true;
+	}
+	//проверка на нулевую матрицу
+	bool isZero() const {
+		for (int i = 0; i < _rows; i++)
+			for (int j = 0; j < _cols; j++)
+				if (_data[i][j] != 0)
+					return false;
+		return true;
+	}//проверка на верхне треугольную
+	bool isUpper() const {
+		if (!isSquare())
+			return false;
+		for (int i = 0; i < _rows; i++)
+			for (int j = 0; j < _cols; j++)
+				if (i>j && _data[i][j] != 0)
+					return false;
+		return true;
+	}
+	//проверкананижне треугольную
+	bool isLow() const {
+		if (!isSquare())
+			return false;
+		for (int i = 0; i < _rows; i++)
+			for (int j = 0; j < _cols; j++)
+				if (i < j && _data[i][j] != 0)
+					return false;
+		return true;
+	}// проверкана треугольность матрицы
+	bool isTriangular() const {
+		if (isUpper())
+			return true;
+		if (isLow())
+			return true;
+		return false;
+	}//проверка на симметричность матрицы
+	bool isSymmetric() const {
+		if (!isSquare())
+			return false;
+		for (int i = 0; i < _rows; i++)
+			for (int j = 0; j < i+1; j++)
+				if ( _data[i][j] != _data[j][i])
+					return false;
+		return true;
+
+	}
+	bool isSkewSymmetric() const {
+		if (!isSquare())
+			return false;
+		for (int i = 0; i < _rows; i++)
+			for (int j = 0; j < i + 1; j++)
+				if (_data[i][j] != (- _data[j][i]))
+					return false;
+		return true;
+	}
 	 };
 
 int main()
 {
 	matrix A(3, 3);
-	/*matrix B(2, 2);
-	matrix C(2, 3);*/
+
 	A.at(0, 0) = 3;
 	A.at(0, 1) = 2;
 	A.at(0, 2) = -5;
@@ -301,19 +458,16 @@ int main()
 	A.at(1, 0) = 2;
 	A.at(1, 1) = -1;
 	A.at(1, 2) = 3;
+
 	A.at(2, 0) = 1;
 	A.at(2, 1) = 2;
 	A.at(2, 2) = -1;
-	cout << A / A << endl;
-	cout << A.det() << endl;
-	try {
-		cout << A << endl;
+	
+	/*cout << A << endl;
+	cout << A.norm(3) << endl;*/
 
-		cout << A.inv() << endl;
-	}
-	catch (exception& e) {
-		cout << e.what() << endl;
-	}
+	matrix B(3, 3, { {0,2,3},{-2,0,4}, {-3,-4,0} });
+	cout << B.isSkewSymmetric() << endl;
 
 	/*B.at(0, 0) = 2;
 	B.at(0, 1) = 3;
