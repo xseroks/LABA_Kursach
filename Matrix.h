@@ -181,7 +181,7 @@ public:
 		return res;
 	}
 	//транспонирование матрицы
-	matrix transpos() {
+	matrix transpose() {
 		matrix res(_cols, _rows);
 		for (int i = 0; i < _rows; i++)
 			for (int j = 0; j < _cols; j++)
@@ -193,7 +193,6 @@ public:
 		return _cols == _rows;
 	}
 
-	//обратная матрица
 	//вспомогательная функция для получения обратной матрицы
 	static matrix E(int size) {        //метод отвязан от объекта, возвращает матрицу размера size*size
 		matrix e(size, size);
@@ -201,7 +200,7 @@ public:
 			e._data[i][i] = 1;
 		return e;
 	}
-
+	//обратная матрица
 	matrix inv() const {
 		if (!isSquare())
 			throw logic_error("Matrix must be a square");
@@ -413,7 +412,7 @@ public:
 					return false;
 		return true;
 	}
-	//проверкананижне треугольную
+	//проверка на нижне треугольную
 	bool isLow() const {
 		if (!isSquare())
 			return false;
@@ -422,7 +421,7 @@ public:
 				if (i < j && _data[i][j] != 0)
 					return false;
 		return true;
-	}// проверкана треугольность матрицы
+	}// проверка на треугольность матрицы
 	bool isTriangular() const {
 		if (isUpper())
 			return true;
@@ -439,7 +438,7 @@ public:
 					return false;
 		return true;
 
-	}
+	} //проверка на кососимметричную матрицу
 	bool isSkewSymmetric() const {
 		if (!isSquare())
 			return false;

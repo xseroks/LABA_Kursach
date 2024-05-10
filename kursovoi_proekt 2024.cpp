@@ -26,7 +26,7 @@ int main()
 	cout << "11 - Транспонирование матрицы" << endl;
 	cout << "12 - Обратная матрица" << endl;
 	cout << "13 - Норма матрицы" << endl;
-	cout << "14 - Является ли матрица диагональной" << endl;
+	cout << "14 - Проверка типа матрицы" << endl;
 	cout << "0 - завершить работу" << endl;
 	
 	while(!exit) //Вечный цикл для ввода пользователем выбора действия программы
@@ -181,18 +181,120 @@ int main()
 			
 			break;
 		}
-		case 9:
+		case 9:{
+			cout << "Введите размер матрицы:\n";
+			int row;
+			int col;
+
+			cin >> row >> col;
+			cout << "Введите матрицу\n";
+			matrix A(row, col);
+			std::cin >> A;
+			cout << "Введите число на которое хотите возвести матрицу\n";
+			int s;
+			cin >> s;
+			cout << "Результат операции возведения матрицы в степень: \n" << (A^s)<< "\n";
 			break;
-		case 10:
+		}
+		case 10:{
+			cout << "Введите размер матрицы:\n";
+			int row;
+			int col;
+
+			cin >> row >> col;
+			cout << "Введите матрицу\n";
+			matrix A(row, col);
+			std::cin >> A;
+			cout << "Введите число на которое хотите возвести матрицу в степень поэлементно\n";
+			int s;
+			cin >> s;
+			cout << "Результат операции поэлементного возведения матрицы в степень: \n" << A.powByEl(s) << "\n";
 			break;
-		case 11:
+		}
+		case 11:{
+			cout << "Введите размер матрицы:\n";
+			int row;
+			int col;
+
+			cin >> row >> col;
+			cout << "Введите матрицу\n";
+			matrix A(row, col);
+			std::cin >> A;
+		
+			cout << "Результат операции транспонирования матрицы: \n" << A.transpose()<< "\n";
 			break;
-		case 12:
+		}
+		case 12:{
+			cout << "Введите размер матрицы:\n";
+			int row;
+			int col;
+
+			cin >> row >> col;
+			cout << "Введите матрицу\n";
+			matrix A(row, col);
+			std::cin >> A;
+
+			cout << "Результат обратной матрицы: \n" << A.inv() << "\n";
 			break;
-		case 13:
-			break;
+		}
+		case 13: {
+			cout << "Введите размер матрицы:\n";
+			int row;
+			int col;
+
+			cin >> row >> col;
+			cout << "Введите матрицу\n";
+			matrix A(row, col);
+			std::cin >> A;
+			int i;
+			cout << "Выберите норму матрицы:" << endl;
+			cout << "1 - столбцовая норма" << endl;
+			cout << "2 - бесконечная норма" << endl;
+			cout << "3 - сферическая норма" << endl;
+			cin >> i;
+			if (i == 1) {
+				cout << A.norm(1) << endl;
+			}
+			if (i == 2) {
+				cout << A.norm(2) << endl;
+			}
+			if (i == 3) {
+				cout << A.norm(3) << endl;
+			}
+			break; 
+		}
 		case 14:
+		{
+			cout << "Введите размер матрицы:\n";
+			int row;
+			int col;
+
+			cin >> row >> col;
+			cout << "Введите матрицу\n";
+			matrix A(row, col);
+			std::cin >> A;
+			if (A.isDiagonal())
+			{
+				cout << "Матрица является диагональной" << endl;
+			}
+			if (A.isIdentity())
+				cout << "Матрица является единичной" << endl;
+			if (A.isSquare())
+				cout << "Матрица является квадратной" << endl;
+			if(A.isZero())
+				cout << "Матрица является нулевой" << endl;
+			if(A.isSkewSymmetric())
+				cout << "Матрица является кососимметричной" << endl;
+			if(A.isSymmetric())
+				cout << "Матрица является симметричной" << endl;
+			if (A.isTriangular())
+				cout << "Матрица является треугольной" << endl;
+			if(A.isUpper())
+				cout << "Матрица является верхне треугольной" << endl;
+			if(A.isLow())
+				cout << "Матрица является нижне треугольной" << endl;
 			break;
+		}
 		default:
 			cout << "Ввод не понятен,повторите" << endl;
 			break;
