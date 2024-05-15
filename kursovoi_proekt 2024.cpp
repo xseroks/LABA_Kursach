@@ -45,6 +45,7 @@ int main()
 		switch (stoi(ch)) {
 		case 0:
 			exit = true;
+			cout << "Завершение работы!";
 			break;
 		case 1: {
 			cout << "Введите размер матриц:\n";
